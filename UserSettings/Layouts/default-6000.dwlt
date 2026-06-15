@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PixelRect:
     serializedVersion: 2
-    x: 8
+    x: 16
     y: 77
     width: 3424
     height: 1326
@@ -1111,7 +1111,7 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: 1.88999, y: -3.42545, z: -47.35773}
+    m_Target: {x: 41.268505, y: 66.41365, z: 117.06935}
     speed: 2
     m_Value: {x: 1.88999, y: -3.42545, z: -47.35773}
   m_RenderMode: 0
@@ -1159,11 +1159,11 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.00060247345, y: 0.99838686, z: -0.05577743, w: 0.010783765}
+    m_Target: {x: 0.00009031921, y: 0.9996295, z: -0.0033084832, w: 0.027297625}
     speed: 2
     m_Value: {x: 0.00060247345, y: 0.9983868, z: -0.055777427, w: 0.010783765}
   m_Size:
-    m_Target: 10
+    m_Target: 3.942748
     speed: 2
     m_Value: 10
   m_Ortho:
