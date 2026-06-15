@@ -3,17 +3,30 @@ using DefaultNamespace;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+public struct Room
+{
+    public Rect roomArea;
+    public Vector2Int Door;
+    
+    public Room(Rect roomArea, Vector2Int door) 
+    {
+        this.roomArea = roomArea;
+        this.Door  = door;
+    }
+}
+
 public class Generator : MonoBehaviour
 {
     [SerializeField] private Vector2Int boardSize;
-    [Range(10,90), SerializeField] private int minRoomSize;
-    [Range(10,90), SerializeField] private int maxRoomSize;
+    [Range(1,25), SerializeField] private int minPartitionSize = 1;
+    [Range(1,25), SerializeField] private int maxPartitionSize = 1;
     
     [Space, SerializeField] private GameObject tilePrefab;
+    [Space, SerializeField] private GameObject doorPrefab;
     
     private GameObject[,] boardPositionsFloor;
 
-    private List<Rect> rooms = new();
+    private readonly List<Room> rooms = new();
     
     public void Generate()
     {
@@ -42,9 +55,9 @@ public class Generator : MonoBehaviour
     {
         if (!partition.IsLeaf()) return;
         
-        if (partition.PartitionArea.width > maxRoomSize || partition.PartitionArea.height > maxRoomSize || Random.Range(0.0f,1.0f) > 0.25)
+        if (partition.PartitionArea.width > maxPartitionSize || partition.PartitionArea.height > maxPartitionSize || Random.Range(0.0f,1.0f) > 0.25)
         {
-            if (partition.Split(minRoomSize, maxRoomSize))
+            if (partition.Split(minPartitionSize, maxPartitionSize))
             {
                 CreateBSP(partition.LeftPartition);
                 CreateBSP(partition.RightPartition);
@@ -58,7 +71,6 @@ public class Generator : MonoBehaviour
         if(partition.RightPartition != null) CreateRoom(partition.RightPartition);
 
         if (!partition.IsLeaf()) return;
-            
         
         Rect partitionArea = partition.PartitionArea;
         int roomWidth = (int)Random.Range(partitionArea.width / 2, partitionArea.width - 2);
@@ -66,19 +78,26 @@ public class Generator : MonoBehaviour
         int roomX = (int)Random.Range(1, partitionArea.width - roomWidth - 1);
         int roomY = (int)Random.Range(1, partitionArea.height - roomHeight - 1);
                 
-        rooms.Add(new Rect (partitionArea.x + roomX, partitionArea.y + roomY, roomWidth, roomHeight));
+        rooms.Add(new Room(
+            new Rect (partitionArea.x + roomX, partitionArea.y + roomY, roomWidth, roomHeight),
+            new Vector2Int((int)(partitionArea.x + roomX), (int)(partitionArea.y + roomY))
+        ));
     }
     
     private void DrawRooms()
     {
-        foreach (Rect room in rooms)
+        foreach (Room room in rooms)
         {
-            Color newColor = Random.ColorHSV();
-            for (int x = (int)room.x; x < room.xMax; x++)
-            for (int y = (int)room.y; y < room.yMax; y++)
+            Rect roomRect = room.roomArea;
+
+            Color newColor = Color.white;//Random.ColorHSV();
+            for (int x = (int)roomRect.x; x < roomRect.xMax; x++)
+            for (int y = (int)roomRect.y; y < roomRect.yMax; y++)
             {
-                GameObject instance = Instantiate(tilePrefab, new Vector3(x, y, 0), Quaternion.identity) as GameObject;
-                instance.GetComponent<SpriteRenderer>().color = newColor;
+                GameObject prefab = room.Door == new Vector2Int(x,y) ? doorPrefab : tilePrefab;
+                
+                GameObject instance = Instantiate(prefab, new Vector3(x, y, 0), Quaternion.identity) as GameObject;
+                //instance.GetComponent<SpriteRenderer>().color = newColor;
                 instance.transform.SetParent(transform);
                 boardPositionsFloor[x,y] = instance;
             }
