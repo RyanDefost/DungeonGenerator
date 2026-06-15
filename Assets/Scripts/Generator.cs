@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DefaultNamespace;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -5,23 +6,27 @@ using Random = UnityEngine.Random;
 public class Generator : MonoBehaviour
 {
     [SerializeField] private Vector2Int boardSize;
-    [SerializeField] private int minRoomSize;
-    [SerializeField] private int maxRoomSize;
+    [Range(10,90), SerializeField] private int minRoomSize;
+    [Range(10,90), SerializeField] private int maxRoomSize;
     
-    [SerializeField] private GameObject tilePrefab;
+    [Space, SerializeField] private GameObject tilePrefab;
     
     private GameObject[,] boardPositionsFloor;
+
+    private List<Rect> rooms = new();
     
     public void Generate()
     {
         ClearRooms();
+        rooms.Clear();
         
         Partition rootDungeon = new (new Rect(0, 0, boardSize.x, boardSize.y));
         CreateBSP(rootDungeon);
-        rootDungeon.CreateRoom();
+        CreateRoom(rootDungeon);
         
         boardPositionsFloor = new GameObject[boardSize.x, boardSize.y];
-        DrawRooms(rootDungeon);
+        
+        DrawRooms();
     }
 
     public void ClearRooms()
@@ -47,24 +52,36 @@ public class Generator : MonoBehaviour
         }
     }
 
-    private void DrawRooms(Partition partition)
+    private void CreateRoom(Partition partition)
     {
-        if(partition == null) return;
+        if(partition.LeftPartition != null) CreateRoom(partition.LeftPartition);
+        if(partition.RightPartition != null) CreateRoom(partition.RightPartition);
 
-        if (partition.IsLeaf())
+        if (!partition.IsLeaf()) return;
+            
+        
+        Rect partitionArea = partition.PartitionArea;
+        int roomWidth = (int)Random.Range(partitionArea.width / 2, partitionArea.width - 2);
+        int roomHeight = (int)Random.Range(partitionArea.height / 2, partitionArea.height - 2);
+        int roomX = (int)Random.Range(1, partitionArea.width - roomWidth - 1);
+        int roomY = (int)Random.Range(1, partitionArea.height - roomHeight - 1);
+                
+        rooms.Add(new Rect (partitionArea.x + roomX, partitionArea.y + roomY, roomWidth, roomHeight));
+    }
+    
+    private void DrawRooms()
+    {
+        foreach (Rect room in rooms)
         {
-            for (int x = (int)partition.Room.x; x < partition.Room.xMax; x++)
-            for (int y = (int)partition.Room.y; y < partition.Room.yMax; y++)
+            Color newColor = Random.ColorHSV();
+            for (int x = (int)room.x; x < room.xMax; x++)
+            for (int y = (int)room.y; y < room.yMax; y++)
             {
                 GameObject instance = Instantiate(tilePrefab, new Vector3(x, y, 0), Quaternion.identity) as GameObject;
+                instance.GetComponent<SpriteRenderer>().color = newColor;
                 instance.transform.SetParent(transform);
                 boardPositionsFloor[x,y] = instance;
             }
-        }
-        else
-        {
-            DrawRooms(partition.LeftPartition);
-            DrawRooms(partition.RightPartition);
         }
     }
 }

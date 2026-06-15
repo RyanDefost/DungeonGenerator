@@ -10,15 +10,14 @@ public class GeneratorInspector : Editor
         DrawDefaultInspector();
 
         Generator myScript = (Generator)target;
-        if(GUILayout.Button("Generate"))
-        {
-            myScript.Generate();
-        }
         
-        if(GUILayout.Button("Clear"))
-        {
-            myScript.ClearRooms();
-        }
+        GUILayout.BeginHorizontal("Box");
+            if(GUILayout.Button("Generate"))
+                myScript.Generate();
+            
+            if(GUILayout.Button("Clear"))
+                myScript.ClearRooms();
+        GUILayout.EndHorizontal();
     }
 
 }
