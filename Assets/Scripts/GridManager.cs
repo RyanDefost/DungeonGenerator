@@ -36,6 +36,16 @@ public struct Cell
     {
         return !(c1 == c2);
     }
+
+    public static bool operator ==(Cell c1, Vector2Int v2)
+    {
+        return (c1.Position.x == v2.x && c1.Position.y == v2.y);
+    }
+
+    public static bool operator !=(Cell c1, Vector2Int v2)
+    {
+        return !(c1 == v2);
+    }
 }
     
 public class GridManager : MonoBehaviour
