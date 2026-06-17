@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace DefaultNamespace
@@ -8,14 +9,14 @@ namespace DefaultNamespace
         public Partition LeftPartition, RightPartition;
         public Rect PartitionArea;
 
-        public Dictionary<Vector2Int, Cell> Cells;
+        public List<Cell> Cells;
         
-        public Rect extention;
-        public Room room;
+        /*public Rect extention;
+        public Room room;*/
         
         public Partition(Rect partitionArea)
         {
-            this.Cells = new Dictionary<Vector2Int, Cell>();
+            this.Cells = new List<Cell>();
             this.PartitionArea = partitionArea;  
         } 
         
@@ -51,5 +52,10 @@ namespace DefaultNamespace
         }
         
         public bool IsLeaf() => LeftPartition == null && RightPartition == null;
+
+        public List<Cell> GetCellsOfType(CellType type)
+        {
+            return Cells.Where(cell => cell.Type == type).ToList();
+        }
     }
 }
