@@ -7,8 +7,6 @@ namespace DefaultNamespace
         public Partition LeftPartition, RightPartition;
         public Rect PartitionArea;
         
-        //public Rect Room = new(-1, -1, 0, 0);
-        
         public Partition(Rect partitionArea)
         {
             this.PartitionArea = partitionArea;

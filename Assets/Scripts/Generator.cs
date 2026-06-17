@@ -1,49 +1,107 @@
 using System.Collections.Generic;
+using System.Linq;
 using DefaultNamespace;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public struct Room
+public enum RoomType
+{
+    NONE = 0,
+    LOOT,
+    START,
+    END
+}
+
+public class Room
 {
     public Rect roomArea;
-    public Vector2Int Door;
+
+    public int doorAmount = 2;
+    public List<Vector2Int> doorPositions;
+
+    public RoomType RoomType = RoomType.NONE;
     
-    public Room(Rect roomArea, Vector2Int door) 
+    public Room neighbor;
+
+    public Room(Rect roomArea) 
     {
         this.roomArea = roomArea;
-        this.Door  = door;
+        this.doorPositions = GenerateDoorPositions(roomArea, this.doorAmount);
+    }
+    
+    private static List<Vector2Int> GenerateDoorPositions(Rect area, int amount)
+    {
+        int amountLeft = amount;
+        List<Vector2Int> positions = new();
+        
+        while (amountLeft > 0)
+        {
+            bool isHorizontal = Random.Range(0, 100) < 40;
+            bool isTop = Random.Range(0, 100) < 40;
+
+            float xPos, yPos;
+            if (isHorizontal)
+            {
+                xPos = (area.xMax - 1) - Random.Range(1, area.width - 2);
+                yPos = isTop ? area.yMax - 1 : area.yMin;
+            }
+            else
+            {
+                yPos = (area.yMax - 1) - Random.Range(1, area.height - 2);
+                xPos = isTop ? area.xMax - 1 : area.xMin;
+            }
+
+            Vector2Int pos = new (Mathf.CeilToInt(xPos), Mathf.CeilToInt(yPos));
+            if(positions.Contains(pos)) continue;
+            
+            positions.Add(pos);
+            amountLeft--;
+        }
+        
+        return positions;
     }
 }
 
 public class Generator : MonoBehaviour
 {
-    [SerializeField] private Vector2Int boardSize;
     [Range(1,25), SerializeField] private int minPartitionSize = 1;
     [Range(1,25), SerializeField] private int maxPartitionSize = 1;
     
-    [Space, SerializeField] private GameObject tilePrefab;
-    [Space, SerializeField] private GameObject doorPrefab;
+    [SerializeField] private int maxRoomWith = 5;
+    [SerializeField] private int minRoomWith = 2;
+    [Space]
+    [SerializeField] private int maxRoomHeight = 5;
+    [SerializeField] private int minRoomHeight = 2;
     
-    private GameObject[,] boardPositionsFloor;
+    [Space, SerializeField] private GameObject tilePrefab;
+    [Space, SerializeField] private GameObject hallwayPrefab;
+    [Space, SerializeField] private Sprite doorSprite;
+    
+    [SerializeField] private GridManager gridManager;
+    [SerializeField] private Astar astar;
 
     private readonly List<Room> rooms = new();
     
     public void Generate()
     {
         ClearRooms();
-        rooms.Clear();
+        this.gridManager.InitializeGrid();
         
-        Partition rootDungeon = new (new Rect(0, 0, boardSize.x, boardSize.y));
+        Partition rootDungeon = new (new Rect(0, 0, this.gridManager.GridSize.x, this.gridManager.GridSize.y));
+        
         CreateBSP(rootDungeon);
-        CreateRoom(rootDungeon);
-        
-        boardPositionsFloor = new GameObject[boardSize.x, boardSize.y];
-        
+        CreateBaseRoom(rootDungeon);
+        CreateExtentionRoom(rootDungeon);
         DrawRooms();
+        DrawDoors();
+        
+        
+        //DrawHallways();
     }
 
     public void ClearRooms()
     {
+        rooms.Clear();
         foreach (Transform child in GetComponentsInChildren<Transform>())
         {
             if(child.gameObject == this.gameObject) continue;
@@ -65,10 +123,10 @@ public class Generator : MonoBehaviour
         }
     }
 
-    private void CreateRoom(Partition partition)
+    private void CreateBaseRoom(Partition partition)
     {
-        if(partition.LeftPartition != null) CreateRoom(partition.LeftPartition);
-        if(partition.RightPartition != null) CreateRoom(partition.RightPartition);
+        if(partition.LeftPartition != null) CreateBaseRoom(partition.LeftPartition);
+        if(partition.RightPartition != null) CreateBaseRoom(partition.RightPartition);
 
         if (!partition.IsLeaf()) return;
         
@@ -77,30 +135,103 @@ public class Generator : MonoBehaviour
         int roomHeight = (int)Random.Range(partitionArea.height / 2, partitionArea.height - 2);
         int roomX = (int)Random.Range(1, partitionArea.width - roomWidth - 1);
         int roomY = (int)Random.Range(1, partitionArea.height - roomHeight - 1);
-                
+        
+        roomWidth = Mathf.Clamp(roomWidth, minRoomWith, maxRoomWith);
+        roomHeight = Mathf.Clamp(roomHeight, minRoomHeight, maxRoomHeight);
+
         rooms.Add(new Room(
-            new Rect (partitionArea.x + roomX, partitionArea.y + roomY, roomWidth, roomHeight),
-            new Vector2Int((int)(partitionArea.x + roomX), (int)(partitionArea.y + roomY))
+            new Rect (partitionArea.x + roomX, partitionArea.y + roomY, roomWidth, roomHeight)
         ));
     }
+
+    private void CreateExtentionRoom(Partition partition)
+    {
+        
+    }
+
+    
     
     private void DrawRooms()
     {
-        foreach (Room room in rooms)
+        foreach (Rect roomRect in rooms.Select(room => room.roomArea))
         {
-            Rect roomRect = room.roomArea;
-
-            Color newColor = Color.white;//Random.ColorHSV();
             for (int x = (int)roomRect.x; x < roomRect.xMax; x++)
             for (int y = (int)roomRect.y; y < roomRect.yMax; y++)
             {
-                GameObject prefab = room.Door == new Vector2Int(x,y) ? doorPrefab : tilePrefab;
                 
-                GameObject instance = Instantiate(prefab, new Vector3(x, y, 0), Quaternion.identity) as GameObject;
-                //instance.GetComponent<SpriteRenderer>().color = newColor;
+                GameObject instance = Instantiate(tilePrefab, new Vector3(x, y, 0), Quaternion.identity);
                 instance.transform.SetParent(transform);
-                boardPositionsFloor[x,y] = instance;
+                
+                if (x == roomRect.xMax - 1 || x == roomRect.x || y == roomRect.yMax - 1 || y == roomRect.y)
+                {
+                    instance.GetComponent<SpriteRenderer>().color = Color.black;
+                }
+
+                Cell cell = new(
+                    new Vector2Int(x, y),
+                    CellType.GROUND,
+                    instance,
+                    true
+                );
+                this.gridManager.SetNode(cell);
             }
         }
+    }
+
+    private void DrawDoors() //TODO separate draw and create
+    {
+        foreach (List<Vector2Int> doors in rooms.Select(room => room.doorPositions))
+        {
+            foreach (Vector2Int doorPosition in doors)
+            {
+                Cell doorCell = this.gridManager.GetCell(doorPosition);
+                doorCell.GameObject.GetComponent<SpriteRenderer>().sprite = doorSprite;
+            
+                doorCell.Type = CellType.DOOR;
+                doorCell.IsOccupied = false;
+            }
+        }
+    }
+
+    private void DrawHallways() //TODO separate draw and create
+    {
+        foreach (Room room in rooms)
+        {
+            float closestDistance = 999;
+            foreach (Room otherRoom in rooms)
+            {
+                if(otherRoom == room) continue;
+                
+                float distance = Vector2.Distance(room.roomArea.position, otherRoom.roomArea.position);
+                if (distance < closestDistance && otherRoom.neighbor != room)
+                {
+                    room.neighbor = otherRoom;
+                    closestDistance = distance;
+                }
+            }
+            
+            foreach (Vector2Int doorPosition in room.doorPositions)
+            {
+                List<Vector2Int> hallwayCells = astar.FindPathToTarget(doorPosition, room.neighbor.doorPositions[0]);
+
+                foreach (Vector2Int cellPosition in hallwayCells)
+                {
+                    //if (this.gridManager.GetCell(cellPosition).IsOccupied) break;
+                    
+                    GameObject instance = Instantiate(hallwayPrefab, new Vector3(cellPosition.x, cellPosition.y, 0), Quaternion.identity);
+                    instance.transform.SetParent(transform);
+
+                    Cell cell = new(
+                        cellPosition,
+                        CellType.HALLWAY,
+                        instance,
+                        false
+                    );
+                    this.gridManager.SetNode(cell);
+                }
+            }
+        }
+        
+        
     }
 }
