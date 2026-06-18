@@ -25,6 +25,8 @@ public class Generator : MonoBehaviour
     
     private readonly List<Partition> partitions = new();
     
+    private FloodFill floodFill = new FloodFill();
+    
     public void Generate()
     {
         ClearRooms();
@@ -36,11 +38,27 @@ public class Generator : MonoBehaviour
         
         partitions.Clear();
         InitializeRooms(rootDungeon);
+
+        var startRoom = partitions[Random.Range(0, partitions.Count)];
         
-        Partition startPartition = partitions[Random.Range(0, partitions.Count)];
-        startPartition.isConnected = true;
-        ConnectRooms(startPartition);
+        ConnectRooms(startRoom);
         HallwayWalls();
+
+        var randomTile = this.gridManager.AllNodes[new Vector2Int((int)startRoom.PartitionArea.center.x, (int)startRoom.PartitionArea.center.y)];
+        
+        Dictionary<Vector2Int, Cell> floodables = new();
+        foreach (var cell in this.gridManager.AllNodes)
+        {
+            if(cell.Value.Type == CellType.NONE || cell.Value.Type == CellType.WALL) continue;
+            floodables.Add(cell.Key, cell.Value);
+        }
+        
+        floodFill.Flood(randomTile, floodables);
+    }
+
+    private void floodDistance()
+    {
+        
     }
 
     public void ClearRooms()
@@ -193,7 +211,7 @@ public class Generator : MonoBehaviour
         }
     }
 
-    private void DrawDoors(Partition partition) //TODO separate draw and create
+    private void DrawDoors(Partition partition) 
     {
         List<Cell> wallCells = partition.GetCellsOfType(CellType.WALL);
         if(wallCells.Count == 0) return;
@@ -229,15 +247,8 @@ public class Generator : MonoBehaviour
             doorAmount--;
         }
     }
-
-    //Grab random start partition
-    // Foreach door
-        // Get the closest partition from door == not self / != connected
-        // get path to the closest door
-        // If reached hallway or Door => STOP and set connected.
-    // Set next 
     
-    private void ConnectRooms(Partition partition) //TODO separate draw and create
+    private void ConnectRooms(Partition partition) 
     {
         //Get partition door
         Cell partitionDoor = partition.GetCellsOfType(CellType.DOOR).First();
@@ -295,7 +306,7 @@ public class Generator : MonoBehaviour
                 false
             );
             this.gridManager.SetNode(cell);
-            partition.Cells.Add(cell);
+            //partition.Cells.Add(cell);
         }
         
         //Set connected true
@@ -306,30 +317,26 @@ public class Generator : MonoBehaviour
 
     private void HallwayWalls()
     {
-        foreach (Partition partition in partitions)
-        {
-            List<Cell> hallwayTiles = partition.GetCellsOfType(CellType.HALLWAY);
+        List<Cell> hallwayTiles = this.gridManager.GetCellsOfType(CellType.HALLWAY);
 
-            foreach (var cell in hallwayTiles)
+        foreach (Cell cell in hallwayTiles)
+        {
+            foreach (Cell neighbor in this.gridManager.GetNeighbors(cell.Position, true))
             {
-                foreach (Cell neighbor in this.gridManager.GetNeighbors(cell.Position))
-                {
-                    if (neighbor.Type == CellType.NONE)
-                    {
-                        GameObject instance = Instantiate(tilePrefab, new Vector3(neighbor.Position.x, neighbor.Position.y, 0), Quaternion.identity);
-                        instance.gameObject.GetComponent<SpriteRenderer>().color = Color.gray1;
-                        instance.transform.SetParent(transform);
+                if (neighbor.Type != CellType.NONE) continue;
+                
+                GameObject instance = Instantiate(tilePrefab, new Vector3(neighbor.Position.x, neighbor.Position.y, 0), Quaternion.identity);
+                instance.gameObject.GetComponent<SpriteRenderer>().color = Color.gray1;
+                instance.transform.SetParent(transform);
                         
-                        Cell wall = new(
-                            neighbor.Position,
-                            CellType.HALLWAY,
-                            instance,
-                            true
-                        );
+                Cell wall = new(
+                    neighbor.Position,
+                    CellType.WALL,
+                    instance,
+                    true
+                );
                         
-                        this.gridManager.SetNode(wall);
-                    }
-                }
+                this.gridManager.SetNode(wall);
             }
         }
     }

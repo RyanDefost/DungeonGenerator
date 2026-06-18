@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
     
 public class GridManager : MonoBehaviour
@@ -38,12 +39,15 @@ public class GridManager : MonoBehaviour
         return AllNodes.TryGetValue(gridPosition, out Cell cell) ? cell : null;
     }
 
-    public List<Cell> GetNeighbors(Vector2Int gridPosition)
+    public List<Cell> GetNeighbors(Vector2Int gridPosition, bool withCorners = false)
     {
         
         List<Cell> result = new ();
         Vector2Int[] directions = { new(0, 1), new(0, -1), new(1, 0), new(-1, 0) };
+        Vector2Int[] cornerDirections = { new(1, 1), new(1, -1), new(-1, 1), new(-1, 1) };
 
+        if(withCorners) directions = directions.Concat(cornerDirections).ToArray();
+        
         foreach (var direction in directions)
         {
             Cell cell = GetCell(gridPosition + direction);
@@ -51,23 +55,10 @@ public class GridManager : MonoBehaviour
         }
 
         return result;
-        /*for (int x = -1; x < 2; x++)
-        {
-            for (int y = -1; y < 2; y++)
-            {
-                Vector2Int cellPosition = new(gridPosition.x + x, gridPosition.y + y);
-                
-                if (cellPosition.x < 0 || cellPosition.x >= GridSize.x || 
-                    cellPosition.y < 0 || cellPosition.y >= GridSize.y || 
-                    Mathf.Abs(x) == Mathf.Abs(y)) {
-                    continue;
-                }
-                
-                Cell canditateCell = GetCell(cellPosition);
-                if(!canditateCell.IsOccupied) 
-                    result.Add(canditateCell);
-            }
-        }
-        return result;*/
+    }
+    
+    public List<Cell> GetCellsOfType(CellType type)
+    {
+        return AllNodes.Values.Where(cell => cell.Type == type).ToList();
     }
 }
