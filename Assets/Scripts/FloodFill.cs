@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,19 +9,19 @@ namespace DefaultNamespace
     public class FloodFill
     {
         private Queue <Vector2Int> pathQueue = new();
-
-        public void Flood(Cell startCell, Dictionary<Vector2Int, Cell> hallwayCells)
+        
+        public void FloodEffect(Cell startCell, Dictionary<Vector2Int, Cell> hallwayCells, Action<Cell> action)
         {
             pathQueue.Clear();
             pathQueue.Enqueue(startCell.Position);
 
-            float steps = 0;
             while (pathQueue.Count > 0)
             {
                 Vector2Int currentCell = pathQueue.Peek();
                 if(hallwayCells.TryGetValue(currentCell, out Cell cell))
-                    cell.GameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(Color.white, Color.darkBlue, steps);;
-                steps += 0.0007f;
+                    action(cell);
+                    //cell.GameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(Color.white, Color.darkBlue, steps);;
+                
                 
                 pathQueue.Dequeue();
                 

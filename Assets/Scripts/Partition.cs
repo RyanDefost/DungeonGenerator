@@ -4,6 +4,15 @@ using UnityEngine;
 
 namespace DefaultNamespace
 {
+    public enum PartitionType
+    {
+        NONE = 0,
+        LOOT,
+        DANGER,
+        START,
+        END
+    }
+    
     public class Partition
     {
         public Partition LeftPartition, RightPartition;
@@ -11,16 +20,19 @@ namespace DefaultNamespace
 
         public List<Cell> Cells;
 
-        public Partition connectedPartition;
+        //public Partition connectedPartition;
         public bool isConnected;
-        
-        /*public Rect extention;
-        public Room room;*/
+
+        public float distanceValue;
+        public PartitionType Type;
+
         
         public Partition(Rect partitionArea)
         {
             this.Cells = new List<Cell>();
             this.PartitionArea = partitionArea;  
+            
+            this.Type = PartitionType.NONE;
         } 
         
         public bool Split(int minPartitionSize, int maxPartitionSize)

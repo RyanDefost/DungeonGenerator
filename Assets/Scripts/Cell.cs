@@ -8,6 +8,8 @@ public class Cell
     public Vector2Int Position;
     public GameObject GameObject;
     public CellType Type;
+
+    public float startDistance = 0;
     
     public bool IsOccupied;
 

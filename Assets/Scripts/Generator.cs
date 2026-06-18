@@ -21,7 +21,9 @@ public class Generator : MonoBehaviour
     [SerializeField] private GridManager gridManager;
     [SerializeField] private Astar astar;
 
+    [Header("Debug")]
     [SerializeField] private bool displayPartitions = true;
+    [SerializeField] private bool displayStartDistance = true;
     
     private readonly List<Partition> partitions = new();
     
@@ -43,8 +45,15 @@ public class Generator : MonoBehaviour
         
         ConnectRooms(startRoom);
         HallwayWalls();
+        
+        if(displayStartDistance) floodColor(startRoom);
+        AssignDistance(startRoom);
+        AssignPartitionType();
+    }
 
-        var randomTile = this.gridManager.AllNodes[new Vector2Int((int)startRoom.PartitionArea.center.x, (int)startRoom.PartitionArea.center.y)];
+    private void floodColor(Partition startRoom)
+    {
+        Cell startCell = this.gridManager.AllNodes[new Vector2Int((int)startRoom.PartitionArea.center.x, (int)startRoom.PartitionArea.center.y)];
         
         Dictionary<Vector2Int, Cell> floodables = new();
         foreach (var cell in this.gridManager.AllNodes)
@@ -53,13 +62,106 @@ public class Generator : MonoBehaviour
             floodables.Add(cell.Key, cell.Value);
         }
         
-        floodFill.Flood(randomTile, floodables);
+        float steps = 0;
+        floodFill.FloodEffect(startCell, floodables, cell =>
+        {
+            cell.GameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(Color.white, Color.darkBlue, steps);
+            steps += 0.0007f;
+        });
+    }
+    
+    private void AssignDistance(Partition startRoom)
+    {
+        Cell startCell = this.gridManager.AllNodes[new Vector2Int((int)startRoom.PartitionArea.center.x, (int)startRoom.PartitionArea.center.y)];
+        
+        Dictionary<Vector2Int, Cell> floodables = new();
+        foreach (var cell in this.gridManager.AllNodes)
+        {
+            if(cell.Value.Type == CellType.NONE || cell.Value.Type == CellType.WALL) continue;
+            floodables.Add(cell.Key, cell.Value);
+        }
+        
+        float distanceFromStart = 0;
+        floodFill.FloodEffect(startCell, floodables, cell =>
+        {
+            cell.startDistance = distanceFromStart;
+            distanceFromStart += 0.1f;
+        });
+
+        foreach (var partition in partitions)
+        {
+            foreach (var partitionCell in partition.Cells)
+            {
+                partition.distanceValue += partitionCell.startDistance;
+            }
+        }
     }
 
-    private void floodDistance()
+    private void AssignPartitionType()
     {
+        //It should have an input for type and amount
+        ApplyType(PartitionType.END, 1, EndRoomConditions);
+        ApplyType(PartitionType.START, 1, StartRoomConditions);
+        ApplyType(PartitionType.LOOT, 3, LootRoomConditions, 50);
+
+        foreach (var partition in partitions)
+        {
+            switch (partition.Type)
+            {
+                case PartitionType.END:
+                {
+                    foreach (Cell cells in partition.Cells.Where(cells => cells.Type == CellType.GROUND))
+                        cells.GameObject.GetComponent<SpriteRenderer>().color = Color.red;
+                    
+                    print(partition.distanceValue + " = Is EndPoint");
+                    break;
+                }
+                case PartitionType.START:
+                {
+                    foreach (Cell cells in partition.Cells.Where(cells => cells.Type == CellType.GROUND))
+                        cells.GameObject.GetComponent<SpriteRenderer>().color = Color.green;
+
+                    print(partition.distanceValue + " = Is StartPoint");
+                    break;
+                }
+                
+                case PartitionType.LOOT:
+                {
+                    foreach (Cell cells in partition.Cells.Where(cells => cells.Type == CellType.GROUND))
+                        cells.GameObject.GetComponent<SpriteRenderer>().color = Color.yellow;
+
+                    print(partition.distanceValue + " = Is LootRoom");
+                    break;
+                }
+            }
+        }
         
     }
+
+    private void ApplyType(PartitionType type, int desiredAmount, Func<Partition, bool> conditions, int chanceAmount = 100)
+    {
+        List<Partition> candidates = partitions.Where(conditions).ToList();
+
+        for (int i = 0; i < desiredAmount; i++)
+        {
+            Partition partition = candidates[Random.Range(0, candidates.Count)];
+            candidates.Remove(partition);
+            
+            if(Random.Range(0, 100) > chanceAmount) continue;
+            
+            partition.Type = type;
+        }
+    }
+
+    private bool EndRoomConditions(Partition partition)
+    {
+        if (partition.distanceValue > 2500 && partition.Type == PartitionType.NONE)
+            return true;
+        
+        
+    }
+    private bool StartRoomConditions(Partition partition) => partition.distanceValue < 1000 && partition.Type == PartitionType.NONE;
+    private bool LootRoomConditions(Partition partition) => partition.distanceValue > 1000 && partition.Type == PartitionType.NONE;
 
     public void ClearRooms()
     {
