@@ -41,7 +41,7 @@ public class Astar : MonoBehaviour
 
                 //ii
                 neighbour.GScore = lowestScoreStepSpace.GScore + Vector2Int.Distance(neighbour.position, lowestScoreStepSpace.position);
-                neighbour.HScore = Vector2Int.Distance(neighbour.position, endPos);
+                neighbour.HScore = Vector2Int.Distance(neighbour.position, endPos) + this.gridManager.GetNeighbors(neighbour.position).Count*2;
 
                 //iii
                 if (OpenSpace.ContainsKey(neighbour.position)

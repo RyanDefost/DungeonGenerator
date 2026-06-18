@@ -18,7 +18,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    public void SetNode(Cell cell)
+    public Cell SetNode(Cell cell)
     {
         if (AllNodes.ContainsKey(cell.Position))
         {
@@ -29,6 +29,8 @@ public class GridManager : MonoBehaviour
             Debug.LogWarning($"Cell {cell.Position} added to grid!");
             AllNodes.Add(cell.Position, cell);
         }
+
+        return cell;
     }
 
     public Cell GetCell(Vector2Int gridPosition)
@@ -45,7 +47,7 @@ public class GridManager : MonoBehaviour
         foreach (var direction in directions)
         {
             Cell cell = GetCell(gridPosition + direction);
-            if (cell.Type != CellType.NONE) result.Add(cell);
+            if (cell != null) result.Add(cell);
         }
 
         return result;

@@ -20,7 +20,7 @@ public class Cell
         this.IsOccupied = isOccupied;
     }
     
-    public static bool operator ==(Cell c1, Cell c2)
+    /*public static bool operator ==(Cell c1, Cell c2)
     {
         return (c1.Position == c2.Position && c1.GameObject == c2.GameObject);
     }
@@ -38,5 +38,5 @@ public class Cell
     public static bool operator !=(Cell c1, Vector2Int v2)
     {
         return !(c1 == v2);
-    }
+    }*/
 }

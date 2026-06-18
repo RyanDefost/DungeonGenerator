@@ -10,6 +10,9 @@ namespace DefaultNamespace
         public Rect PartitionArea;
 
         public List<Cell> Cells;
+
+        public Partition connectedPartition;
+        public bool isConnected;
         
         /*public Rect extention;
         public Room room;*/
@@ -30,7 +33,7 @@ namespace DefaultNamespace
             else if (PartitionArea.height / PartitionArea.width >= 1.25) splitHorizontal = true;
             else splitHorizontal = Random.Range(0.0f, 1.0f) > 0.5f;
 
-            if (Mathf.Min(PartitionArea.height, PartitionArea.width) / 2 < minPartitionSize)
+            if (Mathf.Min(PartitionArea.height, PartitionArea.width) < minPartitionSize)
                 return false;
 
             if (splitHorizontal)
