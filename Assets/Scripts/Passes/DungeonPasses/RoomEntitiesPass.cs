@@ -44,7 +44,6 @@ namespace Passes.DungeonPass
 
                 for (int i = 0; i < amountOfEntities; )
                 {
-                    Debug.Log("Spawning entity " + i);
                     Cell randomCell = partition.Cells[Random.Range(0, partition.Cells.Count)];
                     if(randomCell.Type != CellType.GROUND) continue;
                     

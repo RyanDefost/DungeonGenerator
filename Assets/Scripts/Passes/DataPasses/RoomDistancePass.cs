@@ -19,11 +19,10 @@ namespace Passes.DataPasses
             this.gridManager ??= this.generator.gridManager;
             this.floodFill ??= new FloodFill();
             
-            AssignDistance(this.generator.startPartition);
-            return true;
+            return AssignDistance(this.generator.startPartition);
         }
         
-        public void AssignDistance(Partition startRoom)
+        public bool AssignDistance(Partition startRoom)
         {
             Cell startCell = this.gridManager.AllNodes[new Vector2Int(
                 (int)startRoom.PartitionArea.center.x, 
@@ -45,7 +44,7 @@ namespace Passes.DataPasses
                 amountChecked++;
                 cell.startDistance = amountChecked / floodAmount;
             });
-
+            
             foreach (var partition in this.generator.partitions)
             {
                 float lowestValue =  float.MaxValue;
@@ -55,6 +54,10 @@ namespace Passes.DataPasses
                         partition.distanceValue = partitionCell.startDistance;
                 }
             }
+
+            if (amountChecked == floodAmount) return true;
+            Debug.LogWarning($"Not every room was reachable from {startCell.Position}. ");
+            return false;
         }
     }
 }

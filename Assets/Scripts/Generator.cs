@@ -14,10 +14,15 @@ public class Generator : MonoBehaviour
     [Space, Header("Settings")]
     [Range(6,25), SerializeField] private int maxPartitionSize = 1;
     [Range(6,25), SerializeField] private int minPartitionSize = 1;
+    
     [Space]
     public int minRoomWith = 2;
     public int minRoomHeight = 2;
     [Range(1, 2)] public float sizeOffset = 1;
+    
+    [Space]
+    [SerializeField] private List<BaseRoomPass> roomPasses = new();
+    [SerializeField] private List<BaseDungeonPass> generalPasses = new();
     
     [Header("Debug")]
     [SerializeField] private bool showDebug = true;
@@ -25,22 +30,18 @@ public class Generator : MonoBehaviour
     [Header("Refs")]
     public GridManager gridManager;
 
-    public EntitySettings EnemySettings;
-    
     public readonly List<Partition> partitions = new();
     public Partition startPartition { get; private set; }
+
+    private bool isValid = true;
     
-    [Space]
-    [SerializeField] private List<BaseRoomPass> roomPasses = new();
-    [SerializeField] private List<BaseDungeonPass> generalPasses = new();
-    
-    public void Generate(int seed)
+    public void Generate(int seed, bool setSeed = true)
     {
-        Random.InitState(seed);
-        
         this.partitions.Clear();
+        this.isValid = true;
         ClearRooms();
         
+        if(setSeed) Random.InitState(seed);
         this.gridManager.InitializeGrid();
         
         Partition rootDungeon = new (
@@ -51,6 +52,11 @@ public class Generator : MonoBehaviour
         GenerateRoomPasses(rootDungeon);
         GenerateGeneralPasses();
         
+        if(!isValid)
+        {
+            Debug.Log("REGENERATING");
+            Generate(0, false);
+        }
     }
     
     private void CreateBSP(Partition partition)
@@ -105,6 +111,7 @@ public class Generator : MonoBehaviour
             if (dungeonPass.isRequired && !success)
             {
                 Debug.LogWarning($"{dungeonPass.name} failed to set required pass");
+                this.isValid = false;
                 return;
             }
         }

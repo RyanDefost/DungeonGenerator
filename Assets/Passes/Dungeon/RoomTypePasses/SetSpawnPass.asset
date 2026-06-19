@@ -10,7 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3260f54bd3f846c7ab7cd5e1c4511ff6, type: 3}
-  m_Name: RoomTypeSetPass
+  m_Name: SetSpawnPass
   m_EditorClassIdentifier: Assembly-CSharp::Passes.DungeonPass.RoomTypePass
-  isRequired: 0
+  isRequired: 1
   isDebug: 0
+  partitionType: 3
+  roomColor: {r: 0, g: 1, b: 0.013794422, a: 1}
+  moreThenDistance: 0
+  distanceFromStart: 0.01
+  replacePartition: 0
+  minAmount: 1
+  maxAmount: 1
+  chanceAmount: 100

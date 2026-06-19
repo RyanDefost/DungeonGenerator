@@ -6,6 +6,10 @@ namespace Passes.RoomPasses
     [CreateAssetMenu(fileName = "Pass", menuName = "Pass/RoomPasses/VisualPartitions", order = 1)]
     public class VisualPartitionsPass : BaseRoomPass
     {
+        [Header("Prefab Settings")]
+        [SerializeField] private GameObject visualizerPrefab;
+        [SerializeField] private float zOffset;
+        
         private GridManager gridManager;
         
         public override bool SetPass(Partition partition)
@@ -26,7 +30,7 @@ namespace Passes.RoomPasses
             for (int x = (int)partition.PartitionArea.x; x < partition.PartitionArea.xMax; x++)
             for (int y = (int)partition.PartitionArea.y; y < partition.PartitionArea.yMax; y++)
             {
-                GameObject instance = Object.Instantiate(this.gridManager.baseCellPrefab, new Vector3(x, y, -1), Quaternion.identity);
+                GameObject instance = Object.Instantiate(visualizerPrefab, new Vector3(x, y, -1), Quaternion.identity);
                 instance.GetComponent<SpriteRenderer>().color = color;
                 instance.transform.SetParent(generator.transform);
             }

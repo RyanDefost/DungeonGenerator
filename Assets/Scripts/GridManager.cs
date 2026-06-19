@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
-    public GameObject baseCellPrefab;
     public Vector2Int GridSize;
     [SerializeField] private List<CellSettings> settings;
     

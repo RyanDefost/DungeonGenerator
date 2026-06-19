@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f710d3906c14d1081e6e9d0b4db2b2d, type: 3}
   m_Name: DistanceSetPass
   m_EditorClassIdentifier: Assembly-CSharp::Passes.DataPasses.RoomDistancePass
-  isRequired: 0
+  isRequired: 1
   isDebug: 0
