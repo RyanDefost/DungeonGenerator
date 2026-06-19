@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d7f4a7ba207498cbd0282bb6d9f1748, type: 3}
+  m_Name: GroundCellSetting
+  m_EditorClassIdentifier: Assembly-CSharp::TileSettings.CellSetting
+  cellType: 1
+  tilePrefab: {fileID: 7296863827440520808, guid: 6136f86137b9e1d11b9a6c4cf12bc7bb, type: 3}
+  cellColor: {r: 1, g: 1, b: 1, a: 1}
+  zOffset: 0

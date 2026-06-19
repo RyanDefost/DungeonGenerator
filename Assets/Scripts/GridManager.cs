@@ -1,10 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cells;
 using UnityEngine;
-    
+
 public class GridManager : MonoBehaviour
 {
+    public GameObject baseCellPrefab;
     public Vector2Int GridSize;
+    [SerializeField] private List<CellSetting> settings;
+    
     public Dictionary<Vector2Int, Cell> AllNodes;
     
     public void InitializeGrid()
@@ -60,5 +64,52 @@ public class GridManager : MonoBehaviour
     public List<Cell> GetCellsOfType(CellType type)
     {
         return AllNodes.Values.Where(cell => cell.Type == type).ToList();
+    }
+
+    public Cell InstantiateCell(CellType cellType, Vector2Int position, bool isOccupied = false)
+    {
+        CellSetting setting = GetCellSetting(cellType);
+        
+        GameObject instance = Instantiate(
+            setting.tilePrefab,
+            new Vector3(position.x, position.y, setting.zOffset),
+            Quaternion.identity
+        );
+        
+        instance.gameObject.GetComponent<SpriteRenderer>().color = setting.cellColor;
+        instance.transform.SetParent(transform);
+
+        Cell cell = new(
+            position,
+            cellType,
+            instance,
+            isOccupied
+        );
+        
+        SetNode(cell);
+        return GetCell(position);
+    }
+
+    public CellSetting GetCellSetting(CellType cellType)
+    {
+        CellSetting setting = this.settings.FirstOrDefault(cellSetting => cellSetting.cellType.CompareTo(cellType) == 0);
+        if (setting == null)
+        {
+            Debug.LogWarning($"CellType setting {cellType}, could not be found in GridManager");
+            return null;
+        }
+        
+        return setting;
+    }
+
+    public Cell ChangeCellType(Cell cell, CellType newType)
+    {
+        CellSetting setting = GetCellSetting(newType);
+
+        cell.GameObject.GetComponent<SpriteRenderer>().color = setting.cellColor;
+        ;
+        cell.Type = newType;
+
+        return cell;
     }
 }
