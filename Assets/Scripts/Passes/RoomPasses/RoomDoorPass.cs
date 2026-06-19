@@ -5,21 +5,27 @@ using UnityEngine;
 
 namespace Passes.RoomPasses
 {
-    public class RoomDoorPass : IGenerationPass
+    [CreateAssetMenu(fileName = "Pass", menuName = "Pass/RoomPasses/RoomDoor", order = 1)]
+    public class RoomDoorPass : BaseRoomPass
     {
-        private readonly Generator generator;
-        private readonly GridManager gridManager;
+        private GridManager gridManager;
         
-        public RoomDoorPass(Generator generator)
+        public override bool SetPass(Partition partition)
         {
-            this.generator =  generator;
-            this.gridManager = generator.gridManager;
+            this.gridManager ??= generator.gridManager;
+            return DrawDoors(partition);
         }
         
-        public void DrawDoors(Partition partition) 
+        public override bool SetPass()
+        {
+            Debug.LogWarning($"{this} is Missing parameter Partition!");
+            return false;
+        }
+        
+        public bool DrawDoors(Partition partition) 
         {
             List<Cell> wallCells = partition.GetCellsOfType(CellType.WALL);
-            if(wallCells.Count == 0) return;
+            if(wallCells.Count == 0) return false;
         
             int doorAmount = Random.Range(0, 100) < 75 ? 1 : 2;
             int maxLoops = 10;
@@ -45,6 +51,8 @@ namespace Passes.RoomPasses
             
                 doorAmount--;
             }
+
+            return true;
         }
     }
 }

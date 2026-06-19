@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Cells
 {
     [CreateAssetMenu(fileName = "CellSetting", menuName = "Cells/Setting", order = 1)]
-    public class CellSetting : ScriptableObject
+    public class CellSettings : ScriptableObject
     {
         public CellType cellType = CellType.NONE;
         

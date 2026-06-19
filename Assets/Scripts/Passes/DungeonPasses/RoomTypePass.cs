@@ -6,15 +6,15 @@ using Partitions;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Passes.DataPasses
+namespace Passes.DungeonPass
 {
-    public class RoomTypePass : IGenerationPass
+    [CreateAssetMenu(fileName = "Pass", menuName = "Pass/DungeonPass/RoomType", order = 1)]
+    public class RoomTypePass : BaseDungeonPass
     {
-        private readonly Generator generator;
-        
-        public RoomTypePass(Generator generator)
+        public override bool SetPass()
         {
-            this.generator =  generator;
+            AssignPartitionType();
+            return true;
         }
 
         public void AssignPartitionType()
@@ -22,7 +22,7 @@ namespace Passes.DataPasses
             //It should have an input for type and amount
             ApplyType(PartitionType.END, 1, EndRoomConditions);
             ApplyType(PartitionType.START, 1, StartRoomConditions);
-            ApplyType(PartitionType.LOOT, 1, LootRoomConditions, 50);
+            ApplyType(PartitionType.LOOT, 1, LootRoomConditions, 75);
 
             foreach (var partition in this.generator.partitions)
             {

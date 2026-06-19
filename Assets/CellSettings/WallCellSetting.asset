@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TileSettings.CellSetting
   cellType: 3
   tilePrefab: {fileID: 7296863827440520808, guid: 6136f86137b9e1d11b9a6c4cf12bc7bb, type: 3}
-  cellColor: {r: 0.16981131, g: 0.16981131, b: 0.16981131, a: 1}
+  cellColor: {r: 0.11320752, g: 0.11320752, b: 0.11320752, a: 1}
   zOffset: 0

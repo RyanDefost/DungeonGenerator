@@ -5,23 +5,29 @@ using UnityEngine;
 
 namespace Passes.RoomPasses
 {
-    public class RoomExtensionPass : IGenerationPass
+    [CreateAssetMenu(fileName = "Pass", menuName = "Pass/RoomPasses/RoomExtension", order = 1)]
+    public class RoomExtensionPass : BaseRoomPass
     {
-        private readonly Generator generator;
-        private readonly GridManager gridManager;
+        private GridManager gridManager;
         
-        public RoomExtensionPass(Generator generator)
+        public override bool SetPass(Partition partition)
         {
-            this.generator =  generator;
-            this.gridManager = generator.gridManager;
+            this.gridManager ??= generator.gridManager;
+            return CreateExtensionRoom(partition);
         }
         
-        public void CreateExtensionRoom(Partition partition)
+        public override bool SetPass()
+        {
+            Debug.LogWarning($"{this} is Missing parameter Partition!");
+            return false;
+        }
+        
+        public bool CreateExtensionRoom(Partition partition)
         {
             List<Cell> wallCells = partition.GetCellsOfType(CellType.GROUND);
-            if(wallCells.Count == 0) return;
+            if(wallCells.Count == 0) return false;
             
-            if(Random.Range(0, 100) < 25) return;
+            if(Random.Range(0, 100) < 25) return true;
             
             Cell centerCell = wallCells[Random.Range(0, wallCells.Count)];
             Rect extentionRect = new(centerCell.Position.x - 5/2, centerCell.Position.y - 7/2, 5, 7);
@@ -29,7 +35,7 @@ namespace Passes.RoomPasses
             foreach (var part in generator.partitions)
             {
                 if (part == partition) continue;
-                if (extentionRect.Overlaps(part.PartitionArea)) return;
+                if (extentionRect.Overlaps(part.PartitionArea)) return true;
             }
             
             for (int x = (int)extentionRect.x; x < extentionRect.xMax; x++)
@@ -60,6 +66,8 @@ namespace Passes.RoomPasses
                 
                 this.gridManager.SetNode(currentCell);
             }
+
+            return true;
         }
     }
 }

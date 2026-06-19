@@ -3,22 +3,24 @@ using System.Linq;
 using Cells;
 using HelperScripts;
 using Partitions;
+using Passes.DungeonPass;
 using UnityEngine;
 
 namespace Passes.DataPasses
 {
-    public class RoomDistancePass : IGenerationPass
+    [CreateAssetMenu(fileName = "Pass", menuName = "Pass/DataPass/RoomDistance", order = 1)]
+    public class RoomDistancePass : BaseDungeonPass
     {
-        private readonly Generator generator;
-        private readonly GridManager gridManager;
-        private readonly FloodFill floodFill;
+        private  GridManager gridManager;
+        private  FloodFill floodFill;
         
-        public RoomDistancePass(Generator generator)
+        public override bool SetPass()
         {
-            this.generator =  generator;
-            this.gridManager = generator.gridManager;
+            this.gridManager ??= this.generator.gridManager;
+            this.floodFill ??= new FloodFill();
             
-            this.floodFill = new FloodFill();
+            AssignDistance(this.generator.startPartition);
+            return true;
         }
         
         public void AssignDistance(Partition startRoom)

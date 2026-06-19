@@ -2,22 +2,24 @@ using System.Collections.Generic;
 using Cells;
 using HelperScripts;
 using Partitions;
+using Passes.DungeonPass;
 using UnityEngine;
 
 namespace Passes.DataPasses
 {
-    public class RoomColorFillPass : IGenerationPass
+    [CreateAssetMenu(fileName = "Pass", menuName = "Pass/DataPass/RoomColorFill", order = 1)]
+    public class RoomColorFillPass : BaseDungeonPass
     {
-        private readonly Generator generator;
-        private readonly GridManager gridManager;
-        private readonly FloodFill floodFill;
+        private  GridManager gridManager;
+        private  FloodFill floodFill;
         
-        public RoomColorFillPass(Generator generator)
+        public override bool SetPass()
         {
-            this.generator =  generator;
-            this.gridManager = generator.gridManager;
+            this.gridManager ??= this.generator.gridManager;
+            this.floodFill ??= new FloodFill();
             
-            this.floodFill = new FloodFill();
+            floodColor(generator.startPartition);
+            return true;
         }
         
         public void floodColor(Partition startRoom)

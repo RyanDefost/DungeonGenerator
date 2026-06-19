@@ -3,18 +3,24 @@ using UnityEngine;
 
 namespace Passes.RoomPasses
 {
-    public class VisualPartitionsPass : IGenerationPass
+    [CreateAssetMenu(fileName = "Pass", menuName = "Pass/RoomPasses/VisualPartitions", order = 1)]
+    public class VisualPartitionsPass : BaseRoomPass
     {
-        private readonly Generator generator;
-        private readonly GridManager gridManager;
-
-        public VisualPartitionsPass(Generator generator)
+        private GridManager gridManager;
+        
+        public override bool SetPass(Partition partition)
         {
-            this.generator =  generator;
-            this.gridManager = generator.gridManager;
+            this.gridManager ??= generator.gridManager;
+            return DisplayPartition(partition);
         }
         
-        public void DisplayPartition(Partition partition)
+        public override bool SetPass()
+        {
+            Debug.LogWarning($"{this} is Missing parameter Partition!");
+            return false;
+        }
+        
+        public bool DisplayPartition(Partition partition)
         {
             Color color = Random.ColorHSV();
             for (int x = (int)partition.PartitionArea.x; x < partition.PartitionArea.xMax; x++)
@@ -24,6 +30,8 @@ namespace Passes.RoomPasses
                 instance.GetComponent<SpriteRenderer>().color = color;
                 instance.transform.SetParent(generator.transform);
             }
+
+            return true;
         }
     }
 }

@@ -7,7 +7,7 @@ public class GridManager : MonoBehaviour
 {
     public GameObject baseCellPrefab;
     public Vector2Int GridSize;
-    [SerializeField] private List<CellSetting> settings;
+    [SerializeField] private List<CellSettings> settings;
     
     public Dictionary<Vector2Int, Cell> AllNodes;
     
@@ -68,15 +68,15 @@ public class GridManager : MonoBehaviour
 
     public Cell InstantiateCell(CellType cellType, Vector2Int position, bool isOccupied = false)
     {
-        CellSetting setting = GetCellSetting(cellType);
+        CellSettings settings = GetCellSetting(cellType);
         
         GameObject instance = Instantiate(
-            setting.tilePrefab,
-            new Vector3(position.x, position.y, setting.zOffset),
+            settings.tilePrefab,
+            new Vector3(position.x, position.y, settings.zOffset),
             Quaternion.identity
         );
         
-        instance.gameObject.GetComponent<SpriteRenderer>().color = setting.cellColor;
+        instance.gameObject.GetComponent<SpriteRenderer>().color = settings.cellColor;
         instance.transform.SetParent(transform);
 
         Cell cell = new(
@@ -90,23 +90,23 @@ public class GridManager : MonoBehaviour
         return GetCell(position);
     }
 
-    public CellSetting GetCellSetting(CellType cellType)
+    public CellSettings GetCellSetting(CellType cellType)
     {
-        CellSetting setting = this.settings.FirstOrDefault(cellSetting => cellSetting.cellType.CompareTo(cellType) == 0);
-        if (setting == null)
+        CellSettings settings = this.settings.FirstOrDefault(cellSetting => cellSetting.cellType.CompareTo(cellType) == 0);
+        if (settings == null)
         {
             Debug.LogWarning($"CellType setting {cellType}, could not be found in GridManager");
             return null;
         }
         
-        return setting;
+        return settings;
     }
 
     public Cell ChangeCellType(Cell cell, CellType newType)
     {
-        CellSetting setting = GetCellSetting(newType);
+        CellSettings settings = GetCellSetting(newType);
 
-        cell.GameObject.GetComponent<SpriteRenderer>().color = setting.cellColor;
+        cell.GameObject.GetComponent<SpriteRenderer>().color = settings.cellColor;
         ;
         cell.Type = newType;
 

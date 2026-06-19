@@ -14,7 +14,7 @@ public class GeneratorInspector : Editor
         seedInput = EditorGUILayout.IntSlider(seedInput, 0, 9999);
             
             if(GUILayout.Button("Generate"))
-                myScript.Generate(myScript.Seed);
+                myScript.Generate(seedInput);
         GUILayout.EndHorizontal();
         
         DrawDefaultInspector();

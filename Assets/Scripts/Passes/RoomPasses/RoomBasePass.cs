@@ -4,15 +4,22 @@ using UnityEngine;
 
 namespace Passes.RoomPasses
 {
-    public class RoomBasePass : IGenerationPass
+    [CreateAssetMenu(fileName = "Pass", menuName = "Pass/RoomPasses/BaseRoom", order = 1)]
+    public class RoomBasePass : BaseRoomPass
     {
-        private readonly Generator generator;
-        private readonly GridManager gridManager;
+        private GridManager gridManager;
 
-        public RoomBasePass(Generator generator)
+        
+        public override bool SetPass(Partition partition)
         {
-            this.generator =  generator;
-            this.gridManager = generator.gridManager;
+            this.gridManager ??= generator.gridManager;
+            return CreateBaseRoom(partition);
+        }
+        
+        public override bool SetPass()
+        {
+            Debug.LogWarning($"{this} is Missing parameter Partition!");
+            return false;
         }
         
         public bool CreateBaseRoom(Partition partition)

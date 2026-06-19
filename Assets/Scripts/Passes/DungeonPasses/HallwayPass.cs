@@ -5,20 +5,23 @@ using HelperScripts;
 using Partitions;
 using UnityEngine;
 
-namespace Passes.DataPasses
+namespace Passes.DungeonPass
 {
-    public class HallwayPass : IGenerationPass
+    [CreateAssetMenu(fileName = "Pass", menuName = "Pass/DungeonPass/Hallways", order = 1)]
+    public class HallwayPass : BaseDungeonPass
     {
-        private readonly Generator generator;
-        private readonly GridManager gridManager;
-        private readonly Astar astar;
-        
-        public HallwayPass(Generator generator)
-        {
-            this.generator =  generator;
-            this.gridManager = generator.gridManager;
+        private GridManager gridManager;
+        private Astar astar;
 
-            this.astar = new Astar(this.gridManager);
+        public override bool SetPass()
+        {
+            this.gridManager ??= this.generator.gridManager;
+            this.astar ??= new Astar(this.gridManager);
+
+            ConnectRooms(generator.startPartition);
+            HallwayWalls();
+
+            return true;
         }
 
         public void ConnectRooms(Partition partition)
