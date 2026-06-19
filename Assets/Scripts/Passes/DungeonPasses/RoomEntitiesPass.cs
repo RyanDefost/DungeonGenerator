@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Random = UnityEngine.Random;
 using UnityEngine;
 using Cells;
@@ -9,35 +11,35 @@ namespace Passes.DungeonPass
     [CreateAssetMenu(fileName = "Pass", menuName = "Pass/DungeonPass/RoomEntities", order = 1)]
     public class RoomEntitiesPass : BaseDungeonPass
     {
-        private readonly GridManager gridManager;
+        [Header("Types")]
+        [SerializeField] private EntitySettings entity;
+        [SerializeField] private List<PartitionType> roomTypes;
         
-        public RoomEntitiesPass(Generator generator)
-        {
-            this.generator =  generator;
-            this.gridManager = generator.gridManager;
-        }
-
+        [Header("Spawning parameters")]
+        [SerializeField] private int minAmount = 0;
+        [SerializeField] private int maxAmount = 3;
+        [SerializeField, Range(1, 100)] private int chanceAmount = 100; 
+        
+        private GridManager gridManager;
+        
         public override bool SetPass()
         {
-            throw new System.NotImplementedException();
-        }
-        
-        public void GenerateEntities()
-        {
-            GenerateType(EntityType.ENEMY);
+            this.gridManager ??= this.generator.gridManager;
             
+            GenerateType();
+            return true;
         }
 
-        private void GenerateType(EntityType type)
+        private void GenerateType()
         {
-            EntitySettings settings = this.generator.EnemySettings;
+            EntitySettings settings = entity;
             
             foreach (var partition in this.generator.partitions)
             {
-                if(partition.Type != PartitionType.NONE) continue;
+                if(!roomTypes.Contains(partition.Type)) continue;
                 
-                int amountOfEntities = Random.Range(0, 3);
-                bool willSpawn = Random.Range(0, 100) < 75;
+                int amountOfEntities = Random.Range(this.minAmount, this.maxAmount+1);
+                bool willSpawn = Random.Range(0, 100) < chanceAmount;
                 if (!willSpawn) continue;
 
                 for (int i = 0; i < amountOfEntities; )
@@ -46,7 +48,7 @@ namespace Passes.DungeonPass
                     Cell randomCell = partition.Cells[Random.Range(0, partition.Cells.Count)];
                     if(randomCell.Type != CellType.GROUND) continue;
                     
-                    GameObject instance = Object.Instantiate(this.gridManager.baseCellPrefab, new Vector3(randomCell.Position.x, randomCell.Position.y, settings.zOffset), Quaternion.identity);
+                    GameObject instance = Object.Instantiate(settings.tilePrefab, new Vector3(randomCell.Position.x, randomCell.Position.y, settings.zOffset), Quaternion.identity);
                     instance.GetComponent<SpriteRenderer>().color = settings.cellColor;
                     instance.transform.SetParent(generator.transform);
 

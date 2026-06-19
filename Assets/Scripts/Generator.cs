@@ -21,8 +21,6 @@ public class Generator : MonoBehaviour
     
     [Header("Debug")]
     [SerializeField] private bool showDebug = true;
-    //[SerializeField] private bool displayPartitions = true;
-    //[SerializeField] private bool displayStartDistance = true;
     
     [Header("Refs")]
     public GridManager gridManager;
@@ -36,33 +34,9 @@ public class Generator : MonoBehaviour
     [SerializeField] private List<BaseRoomPass> roomPasses = new();
     [SerializeField] private List<BaseDungeonPass> generalPasses = new();
     
-    //Passes
-    /*private VisualPartitionsPass visualPartitions;
-    private RoomBasePass roomBasePass;
-    private RoomExtensionPass roomExtensionPass;
-    private RoomDoorPass roomDoorPass;
-    private HallwayPass hallwayPass;
-    private RoomDistancePass roomDistancePass;
-    private RoomColorFillPass roomColorFillPass;
-    private RoomTypePass roomTypePass;
-    private RoomEntitiesPass roomEntitiesPass;*/
-    
     public void Generate(int seed)
     {
         Random.InitState(seed);
-        
-        /*this.visualPartitions  ??= new VisualPartitionsPass(this);
-        this.roomBasePass      ??= new RoomBasePass(this);
-        this.roomExtensionPass ??= new RoomExtensionPass(this);
-        this.roomDoorPass      ??= new RoomDoorPass(this);
-        
-        this.hallwayPass       ??= new HallwayPass(this);
-        
-        this.roomDistancePass  ??= new RoomDistancePass(this);
-        this.roomColorFillPass ??= new RoomColorFillPass(this);
-        
-        this.roomTypePass      ??= new RoomTypePass(this);
-        this.roomEntitiesPass  ??= new RoomEntitiesPass(this);*/
         
         this.partitions.Clear();
         ClearRooms();
@@ -76,8 +50,6 @@ public class Generator : MonoBehaviour
         CreateBSP(rootDungeon);
         GenerateRoomPasses(rootDungeon);
         GenerateGeneralPasses();
-        
-        //GenerateRoomPasses();
         
     }
     
@@ -117,16 +89,6 @@ public class Generator : MonoBehaviour
             }
         }
         this.partitions.Add(partition);
-        
-        /*if(displayPartitions) //DEBUG
-            this.visualPartitions.DisplayPartition(partition);
-
-        if (roomBasePass.CreateBaseRoom(partition))
-        {
-            this.roomExtensionPass.CreateExtensionRoom(partition);
-            this.roomDoorPass.DrawDoors(partition);
-            this.partitions.Add(partition);
-        }*/
     }
 
     private void GenerateGeneralPasses()
@@ -147,23 +109,6 @@ public class Generator : MonoBehaviour
             }
         }
     }
-    
-    /*private void GenerateRoomPasses()
-    {
-        Partition startRoom = partitions[Random.Range(0, partitions.Count)];
-        
-        hallwayPass.ConnectRooms(startRoom);
-        hallwayPass.HallwayWalls();
-        
-        // SET DATA
-        
-        if(displayStartDistance) 
-            this.roomColorFillPass.floodColor(startRoom);
-        
-        this.roomDistancePass.AssignDistance(startRoom);
-        this.roomTypePass.AssignPartitionType();
-        this.roomEntitiesPass.GenerateEntities();
-    }*/
     
     public void ClearRooms()
     {
