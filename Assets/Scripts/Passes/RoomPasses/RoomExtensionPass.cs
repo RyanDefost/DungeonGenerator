@@ -8,11 +8,11 @@ namespace Passes.RoomPasses
     [CreateAssetMenu(fileName = "Pass", menuName = "Pass/RoomPasses/RoomExtension", order = 1)]
     public class RoomExtensionPass : BaseRoomPass
     {
-        private GridManager gridManager;
+        //private GridManager gridManager;
         
         public override bool SetPass(Partition partition)
         {
-            this.gridManager ??= generator.gridManager;
+            //this.gridManager = generator.gridManager;
             return CreateExtensionRoom(partition);
         }
         
@@ -24,6 +24,8 @@ namespace Passes.RoomPasses
         
         public bool CreateExtensionRoom(Partition partition)
         {
+            var gridManager = this.generator.gridManager;
+            
             List<Cell> wallCells = partition.GetCellsOfType(CellType.GROUND);
             if(wallCells.Count == 0) return false;
             
@@ -41,30 +43,30 @@ namespace Passes.RoomPasses
             for (int x = (int)extentionRect.x; x < extentionRect.xMax; x++)
             for (int y = (int)extentionRect.y; y < extentionRect.yMax; y++)
             {
-                Cell currentCell = this.gridManager.GetCell(new Vector2Int(x, y)) ?? this.gridManager.SetNode(new Cell(new Vector2Int(x,y)));
+                Cell currentCell = gridManager.GetCell(new Vector2Int(x, y)) ?? gridManager.SetNode(new Cell(new Vector2Int(x,y)));
                 
                 if(currentCell.Type != CellType.NONE)
                 {
                     if (x == extentionRect.xMax - 1 || x == extentionRect.x || y == extentionRect.yMax - 1 || y == extentionRect.y)
                     {
                         if(currentCell.Type == CellType.WALL)
-                            currentCell = this.gridManager.ChangeCellType(currentCell, CellType.WALL);
+                            currentCell = gridManager.ChangeCellType(currentCell, CellType.WALL);
                     }
                     else if (currentCell.Type == CellType.WALL)
                     {
-                        currentCell = this.gridManager.ChangeCellType(currentCell, CellType.GROUND);
+                        currentCell = gridManager.ChangeCellType(currentCell, CellType.GROUND);
                     }
                 }
                 else
                 {
-                    currentCell = this.gridManager.InstantiateCell(CellType.GROUND, new Vector2Int(x, y), true);
+                    currentCell = gridManager.InstantiateCell(CellType.GROUND, new Vector2Int(x, y), true);
                     partition.Cells.Add(currentCell);
                     
                     if (x == extentionRect.xMax - 1 || x == extentionRect.x || y == extentionRect.yMax - 1 || y == extentionRect.y)
-                        currentCell = this.gridManager.ChangeCellType(currentCell, CellType.WALL);
+                        currentCell = gridManager.ChangeCellType(currentCell, CellType.WALL);
                 }
                 
-                this.gridManager.SetNode(currentCell);
+                gridManager.SetNode(currentCell);
             }
 
             return true;

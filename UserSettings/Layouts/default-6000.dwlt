@@ -271,7 +271,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 543
+    width: 542
     height: 419
   m_MinSize: {x: 231, y: 276}
   m_MaxSize: {x: 10001, y: 10026}
@@ -296,9 +296,9 @@ MonoBehaviour:
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 543
+    x: 542
     y: 0
-    width: 570
+    width: 571
     height: 419
   m_MinSize: {x: 102, y: 126}
   m_MaxSize: {x: 4002, y: 4026}
@@ -1111,9 +1111,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: 8.630178, y: 50.65626, z: -145.03943}
+    m_Target: {x: 28.304464, y: 34.97265, z: 3.3094113}
     speed: 2
-    m_Value: {x: 8.630178, y: 50.65626, z: -145.03943}
+    m_Value: {x: 28.304464, y: 34.97265, z: 3.3094113}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1159,13 +1159,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.006304644, y: 0.9936943, z: 0.08066564, w: -0.077665694}
+    m_Target: {x: -0.0012904563, y: 0.99789333, z: -0.061448094, w: -0.02095885}
     speed: 2
-    m_Value: {x: 0.006304644, y: 0.9936943, z: 0.08066564, w: -0.077665694}
+    m_Value: {x: -0.0012904563, y: 0.9978934, z: -0.061448094, w: -0.02095885}
   m_Size:
-    m_Target: 109.90372
+    m_Target: 43.06781
     speed: 2
-    m_Value: 109.90372
+    m_Value: 43.06781
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1503,7 +1503,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 24
-    width: 542
+    width: 541
     height: 393
   m_SerializedDataModeController:
     m_DataMode: 0
@@ -1553,7 +1553,7 @@ MonoBehaviour:
       m_Data: 46364
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 55584
+    - m_Data: 59866
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1586,7 +1586,7 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 55584
+    - m_Data: 59866
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1709,9 +1709,9 @@ MonoBehaviour:
     m_TextWithWhitespace: "Console\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 544
+    x: 543
     y: 24
-    width: 568
+    width: 569
     height: 393
   m_SerializedDataModeController:
     m_DataMode: 0
@@ -1781,6 +1781,13 @@ MonoBehaviour:
   - {fileID: -5475051401550479605, guid: 153b138ddd88e7b42a0c29bde1e7142c, type: 3}
   - {fileID: -5475051401550479605, guid: 7794dc8c6277cb649804d7253e567322, type: 3}
   - {fileID: -5475051401550479605, guid: 7794dc8c6277cb649804d7253e567322, type: 3}
+  - {fileID: 11400000, guid: 99d6d41531ec36841953987e7ae78317, type: 3}
+  - {fileID: 11400000, guid: 99d6d41531ec36841953987e7ae78317, type: 3}
+  - {fileID: 11400000, guid: 99d6d41531ec36841953987e7ae78317, type: 3}
+  - {fileID: 12800000, guid: 30dc370b164eefc43b95744fc796dad0, type: 3}
+  - {fileID: -876546973899608171, guid: 39144937a5efe954dac51acbbe54157e, type: 3}
+  - {fileID: -876546973899608171, guid: 39144937a5efe954dac51acbbe54157e, type: 3}
+  - {fileID: -876546973899608171, guid: 39144937a5efe954dac51acbbe54157e, type: 3}
   m_InstanceIDsLockedBeforeSerialization: 62b30000
   m_PreviewResizer:
     m_CachedPref: 160

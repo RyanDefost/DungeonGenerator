@@ -11,12 +11,12 @@ namespace Passes.DataPasses
     [CreateAssetMenu(fileName = "Pass", menuName = "Pass/DataPass/RoomDistance", order = 1)]
     public class RoomDistancePass : BaseDungeonPass
     {
-        private  GridManager gridManager;
+        //private  GridManager gridManager;
         private  FloodFill floodFill;
         
         public override bool SetPass()
         {
-            this.gridManager ??= this.generator.gridManager;
+            //this.gridManager = this.generator.gridManager;
             this.floodFill ??= new FloodFill();
             
             return AssignDistance(this.generator.startPartition);
@@ -24,13 +24,15 @@ namespace Passes.DataPasses
         
         public bool AssignDistance(Partition startRoom)
         {
-            Cell startCell = this.gridManager.AllNodes[new Vector2Int(
+            var gridManager = this.generator.gridManager;
+            
+            Cell startCell = gridManager.AllNodes[new Vector2Int(
                 (int)startRoom.PartitionArea.center.x, 
                 (int)startRoom.PartitionArea.center.y)
             ];
             
             Dictionary<Vector2Int, Cell> floodableCells = new();
-            foreach (KeyValuePair<Vector2Int, Cell> cell in this.gridManager.AllNodes)
+            foreach (KeyValuePair<Vector2Int, Cell> cell in gridManager.AllNodes)
             {
                 if(cell.Value.Type is CellType.NONE or CellType.WALL) continue;
                 floodableCells.Add(cell.Key, cell.Value);

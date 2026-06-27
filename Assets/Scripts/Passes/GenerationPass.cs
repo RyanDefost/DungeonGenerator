@@ -10,7 +10,7 @@ namespace Passes
         public bool isDebug = false;
         
         protected Generator generator;
-        public void Connect(Generator generator) => this.generator ??= generator;
+        public void Connect(Generator generator) => this.generator = generator;
         
         public abstract bool SetPass();
     }

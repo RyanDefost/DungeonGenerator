@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Entities;
 using Partitions;
@@ -34,6 +35,13 @@ public class Generator : MonoBehaviour
     public Partition startPartition { get; private set; }
 
     private bool isValid = true;
+
+    private void Start()
+    {
+        this.partitions.Clear();
+        this.isValid = true;
+        ClearRooms();
+    }
     
     public void Generate(int seed, bool setSeed = true)
     {

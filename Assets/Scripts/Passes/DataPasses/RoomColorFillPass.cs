@@ -10,12 +10,12 @@ namespace Passes.DataPasses
     [CreateAssetMenu(fileName = "Pass", menuName = "Pass/DataPass/RoomColorFill", order = 1)]
     public class RoomColorFillPass : BaseDungeonPass
     {
-        private  GridManager gridManager;
-        private  FloodFill floodFill;
+        //private  GridManager gridManager;
+        private FloodFill floodFill;
         
         public override bool SetPass()
         {
-            this.gridManager ??= this.generator.gridManager;
+            //this.gridManager = this.generator.gridManager;
             this.floodFill ??= new FloodFill();
             
             floodColor(generator.startPartition);
@@ -24,10 +24,12 @@ namespace Passes.DataPasses
         
         public void floodColor(Partition startRoom)
         {
-            Cell startCell = this.gridManager.AllNodes[new Vector2Int((int)startRoom.PartitionArea.center.x, (int)startRoom.PartitionArea.center.y)];
+            var gridManager = this.generator.gridManager;
+            
+            Cell startCell = gridManager.AllNodes[new Vector2Int((int)startRoom.PartitionArea.center.x, (int)startRoom.PartitionArea.center.y)];
             
             Dictionary<Vector2Int, Cell> floodables = new();
-            foreach (var cell in this.gridManager.AllNodes)
+            foreach (var cell in gridManager.AllNodes)
             {
                 if(cell.Value.Type == CellType.NONE || cell.Value.Type == CellType.WALL) continue;
                 floodables.Add(cell.Key, cell.Value);

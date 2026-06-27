@@ -7,12 +7,12 @@ namespace Passes.RoomPasses
     [CreateAssetMenu(fileName = "Pass", menuName = "Pass/RoomPasses/BaseRoom", order = 1)]
     public class RoomBasePass : BaseRoomPass
     {
-        private GridManager gridManager;
+        //private GridManager gridManager;
 
         
         public override bool SetPass(Partition partition)
         {
-            this.gridManager ??= generator.gridManager;
+            //this.gridManager = generator.gridManager;
             return CreateBaseRoom(partition);
         }
         
@@ -24,6 +24,8 @@ namespace Passes.RoomPasses
         
         public bool CreateBaseRoom(Partition partition)
         {
+            var gridManager = this.generator.gridManager;
+            
             Rect partitionArea = partition.PartitionArea;
             float roomWidth = (int)Random.Range(partitionArea.width / generator.sizeOffset, partitionArea.width - 2);
             float roomHeight = (int)Random.Range(partitionArea.height / generator.sizeOffset, partitionArea.height - 2);
@@ -37,10 +39,10 @@ namespace Passes.RoomPasses
             for (int x = (int)roomArea.x; x < roomArea.xMax; x++)
             for (int y = (int)roomArea.y; y < roomArea.yMax; y++)
             {
-                Cell cell = this.gridManager.InstantiateCell(CellType.GROUND, new Vector2Int(x, y), true);
+                Cell cell = gridManager.InstantiateCell(CellType.GROUND, new Vector2Int(x, y), true);
                 
                 if (x == roomArea.xMax - 1 || x == roomArea.x || y == roomArea.yMax - 1 || y == roomArea.y)
-                    cell = this.gridManager.ChangeCellType(cell, CellType.WALL);
+                    cell = gridManager.ChangeCellType(cell, CellType.WALL);
             
                 partition.Cells.Add(cell);
             }

@@ -20,11 +20,11 @@ namespace Passes.DungeonPass
         [SerializeField] private int maxAmount = 3;
         [SerializeField, Range(1, 100)] private int chanceAmount = 100; 
         
-        private GridManager gridManager;
+        //private GridManager gridManager;
         
         public override bool SetPass()
         {
-            this.gridManager ??= this.generator.gridManager;
+            //this.gridManager = this.generator.gridManager;
             
             GenerateType();
             return true;

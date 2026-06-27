@@ -10,11 +10,11 @@ namespace Passes.RoomPasses
         [SerializeField] private GameObject visualizerPrefab;
         [SerializeField] private float zOffset;
         
-        private GridManager gridManager;
+        //private GridManager gridManager;
         
         public override bool SetPass(Partition partition)
         {
-            this.gridManager ??= generator.gridManager;
+            //this.gridManager = generator.gridManager;
             return DisplayPartition(partition);
         }
         

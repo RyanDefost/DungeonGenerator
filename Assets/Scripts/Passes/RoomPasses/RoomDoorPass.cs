@@ -8,11 +8,11 @@ namespace Passes.RoomPasses
     [CreateAssetMenu(fileName = "Pass", menuName = "Pass/RoomPasses/RoomDoor", order = 1)]
     public class RoomDoorPass : BaseRoomPass
     {
-        private GridManager gridManager;
+        //private GridManager gridManager;
         
         public override bool SetPass(Partition partition)
         {
-            this.gridManager ??= generator.gridManager;
+            //this.gridManager = generator.gridManager;
             return DrawDoors(partition);
         }
         
@@ -24,6 +24,8 @@ namespace Passes.RoomPasses
         
         public bool DrawDoors(Partition partition) 
         {
+            var gridManager = this.generator.gridManager;
+            
             List<Cell> wallCells = partition.GetCellsOfType(CellType.WALL);
             if(wallCells.Count == 0) return false;
         
@@ -34,7 +36,7 @@ namespace Passes.RoomPasses
                 Cell wallCell = wallCells[Random.Range(0, wallCells.Count)];
             
                 //Check for empty space
-                List<Cell> neighbors = this.gridManager.GetNeighbors(wallCell.Position);
+                List<Cell> neighbors = gridManager.GetNeighbors(wallCell.Position);
             
                 bool hasConnectedGround = false;
                 bool hasConnectedOOutside = false;
@@ -46,7 +48,7 @@ namespace Passes.RoomPasses
                 
                 if(!hasConnectedGround || !hasConnectedOOutside) continue;
             
-                wallCell = this.gridManager.ChangeCellType(wallCell, CellType.DOOR);
+                wallCell = gridManager.ChangeCellType(wallCell, CellType.DOOR);
                 wallCell.IsOccupied = false;
             
                 doorAmount--;

@@ -10,13 +10,13 @@ namespace Passes.DungeonPass
     [CreateAssetMenu(fileName = "Pass", menuName = "Pass/DungeonPass/Hallways", order = 1)]
     public class HallwayPass : BaseDungeonPass
     {
-        private GridManager gridManager;
+        //private GridManager gridManager;
         private Astar astar;
 
         public override bool SetPass()
         {
-            this.gridManager ??= this.generator.gridManager;
-            this.astar ??= new Astar(this.gridManager);
+            //this.gridManager = this.generator.gridManager;
+            this.astar ??= new Astar(this.generator.gridManager);
 
             ConnectRooms(generator.startPartition);
             HallwayWalls();
@@ -91,10 +91,11 @@ namespace Passes.DungeonPass
             }
             
             //Draw path
+            var gridManager = this.generator.gridManager;
             foreach (Vector2Int cellPosition in hallwayCells)
             {
-                if (this.gridManager.GetCell(cellPosition).Type == CellType.HALLWAY) break;
-                this.gridManager.InstantiateCell(CellType.HALLWAY,  cellPosition, false);
+                if (gridManager.GetCell(cellPosition).Type == CellType.HALLWAY) break;
+                gridManager.InstantiateCell(CellType.HALLWAY,  cellPosition, false);
             }
             
             return closestPartition;
@@ -104,14 +105,16 @@ namespace Passes.DungeonPass
         
         public void HallwayWalls()
         {
-            List<Cell> hallwayTiles = this.gridManager.GetCellsOfType(CellType.HALLWAY);
+            var gridManager = this.generator.gridManager;
+            
+            List<Cell> hallwayTiles = gridManager.GetCellsOfType(CellType.HALLWAY);
 
             foreach (Cell cell in hallwayTiles)
             {
-                foreach (Cell neighbor in this.gridManager.GetNeighbors(cell.Position, true))
+                foreach (Cell neighbor in gridManager.GetNeighbors(cell.Position, true))
                 {
                     if (neighbor.Type != CellType.NONE) continue;
-                    this.gridManager.InstantiateCell(CellType.WALL,  neighbor.Position, true);
+                    gridManager.InstantiateCell(CellType.WALL,  neighbor.Position, true);
                 }
             }
         }
