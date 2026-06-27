@@ -1111,7 +1111,7 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: 28.304464, y: 34.97265, z: 3.3094113}
+    m_Target: {x: 32.549458, y: 35.30913, z: -6.679241}
     speed: 2
     m_Value: {x: 28.304464, y: 34.97265, z: 3.3094113}
   m_RenderMode: 0
@@ -1159,7 +1159,7 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.0012904563, y: 0.99789333, z: -0.061448094, w: -0.02095885}
+    m_Target: {x: 0.00024301956, y: 0.99853647, z: -0.053973593, w: 0.004493433}
     speed: 2
     m_Value: {x: -0.0012904563, y: 0.9978934, z: -0.061448094, w: -0.02095885}
   m_Size:
@@ -1788,6 +1788,7 @@ MonoBehaviour:
   - {fileID: -876546973899608171, guid: 39144937a5efe954dac51acbbe54157e, type: 3}
   - {fileID: -876546973899608171, guid: 39144937a5efe954dac51acbbe54157e, type: 3}
   - {fileID: -876546973899608171, guid: 39144937a5efe954dac51acbbe54157e, type: 3}
+  - {fileID: -876546973899608171, guid: af66091e0eca0c04a9c3584ae867418a, type: 3}
   m_InstanceIDsLockedBeforeSerialization: 62b30000
   m_PreviewResizer:
     m_CachedPref: 160
